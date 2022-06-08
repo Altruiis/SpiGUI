@@ -64,3 +64,15 @@ artifacts {
     archives javadocJar
     archives sourcesJar
 }
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId = 'com.samjakob'
+            artifactId = 'SpiGUI'
+            version = '1.2.2-SNAPSHOT'
+
+            from components.java
+        }
+    }
+}
