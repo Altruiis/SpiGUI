@@ -22,9 +22,6 @@ dependencies {
     testCompileOnly(group: 'io.papermc.paper', name: 'paper-api', version: '1.18.2-R0.1-SNAPSHOT')
 }
 
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
-
 task testJar(type: Jar) {
     from sourceSets.main.output.classesDirs
     from sourceSets.test.output.classesDirs
