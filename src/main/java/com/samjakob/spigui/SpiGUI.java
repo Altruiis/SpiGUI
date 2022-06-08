@@ -62,10 +62,10 @@ public class SpiGUI {
         switch (type) {
             case PREV_BUTTON:
                 if (inventory.getCurrentPage() > 0) return new SGButton(new ItemBuilder(Material.ARROW)
-                        .name("&a&l\u2190 Previous Page")
+                        .name("<green><b>\u2190 Previous Page")
                         .lore(
-                                "&aClick to move back to",
-                                "&apage " + inventory.getCurrentPage() + ".")
+                                "<green>Click to move back to",
+                                "<green>page " + inventory.getCurrentPage() + ".")
                         .build()
                 ).withListener(event -> {
                     event.setCancelled(true);
@@ -75,20 +75,20 @@ public class SpiGUI {
 
             case CURRENT_BUTTON:
                 return new SGButton(new ItemBuilder(Material.NAME_TAG)
-                        .name("&7&lPage " + (inventory.getCurrentPage() + 1) + " of " + inventory.getMaxPage())
+                        .name("<gray><b>Page " + (inventory.getCurrentPage() + 1) + " of " + inventory.getMaxPage())
                         .lore(
-                                "&7You are currently viewing",
-                                "&7page " + (inventory.getCurrentPage() + 1) + "."
+                                "<gray>You are currently viewing",
+                                "<gray>page " + (inventory.getCurrentPage() + 1) + "."
                         ).build()
                 ).withListener(event -> event.setCancelled(true));
 
             case NEXT_BUTTON:
                 if (inventory.getCurrentPage() < inventory.getMaxPage() - 1)
                     return new SGButton(new ItemBuilder(Material.ARROW)
-                            .name("&a&lNext Page \u2192")
+                            .name("<green><b>Next Page \u2192")
                             .lore(
-                                    "&aClick to move forward to",
-                                    "&apage " + (inventory.getCurrentPage() + 2) + "."
+                                    "<green>Click to move forward to",
+                                    "<green>page " + (inventory.getCurrentPage() + 2) + "."
                             ).build()
                     ).withListener(event -> {
                         event.setCancelled(true);

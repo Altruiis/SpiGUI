@@ -43,28 +43,28 @@ public class SpiGUITest extends JavaPlugin {
 
             if (args.length == 0) {
                 // Open a test SpiGUI menu.
-                SGMenu myAwesomeMenu = SpiGUITest.getSpiGUI().create("&c&lSpiGUI &c(Page {currentPage}/{maxPage})", 3);
+                SGMenu myAwesomeMenu = SpiGUITest.getSpiGUI().create("<red><b>SpiGUI <red>(Page {currentPage}/{maxPage})", 3);
 
                 myAwesomeMenu.setButton(0, 10, new SGButton(
                         new ItemBuilder(Material.PLAYER_HEAD)
                                 .skullOwner(player.getName())
-                                .name("&e&l" + MessageUtil.toString(player.displayName()))
+                                .name("<yellow><b>" + MessageUtil.toString(player.displayName()))
                                 .lore(
-                                        "&eGame Mode: &6" + player.getGameMode(),
-                                        "&eLocation: &6" + String.format(
+                                        "<yellow>Game Mode: <gold>" + player.getGameMode(),
+                                        "<yellow>Location: <gold>" + String.format(
                                                 "%.0f, %.0f, %.0f",
                                                 player.getLocation().getX(),
                                                 player.getLocation().getY(),
                                                 player.getLocation().getZ()
                                         ),
-                                        "&eExperience: &6" + player.getTotalExperience()
+                                        "<yellow>Experience: <gold>" + player.getTotalExperience()
                                 )
                                 .build()
                 ));
 
                 myAwesomeMenu.setButton(1, 0, new SGButton(
                         new ItemBuilder(Material.GOLD_ORE)
-                                .name("&6Get rich quick!")
+                                .name("<gold>Get rich quick!")
                                 .build()
                 ).withListener(event -> {
                     Inventory playerInventory = event.getWhoClicked().getInventory();
@@ -80,8 +80,8 @@ public class SpiGUITest extends JavaPlugin {
                     event.getWhoClicked().sendMessage(
                             MessageUtil.color(
                                     event.getCurrentItem().getType() == Material.GOLD_ORE
-                                            ? "&e&lYou are now rich!"
-                                            : "&7&lYou are now poor."
+                                            ? "<yellow><b>You are now rich!"
+                                            : "<yellow><b>You are now poor."
                             )
                     );
 
@@ -91,7 +91,7 @@ public class SpiGUITest extends JavaPlugin {
 
                     myAwesomeMenu.getButton(1, 0).setIcon(
                             new ItemBuilder(newMaterial).name(
-                                    newMaterial == Material.GOLD_ORE ? "&6Get rich quick!" : "&7Get poor quick!"
+                                    newMaterial == Material.GOLD_ORE ? "<gold>Get rich quick!" : "<gray>Get poor quick!"
                             ).amount(1).build()
                     );
 
@@ -134,7 +134,7 @@ public class SpiGUITest extends JavaPlugin {
                                 private SGButton nextColorButton() {
                                     return new SGButton(
                                             new ItemBuilder(Material.BLACK_STAINED_GLASS)
-                                                    .name("&" + Integer.toHexString(currentColor) + "&lSpiGUI!!!")
+                                                    .name("" + Integer.toHexString(currentColor) + "<b>SpiGUI!!!")
                                                     .data(currentColor)
                                                     .build()
                                     );
@@ -160,7 +160,7 @@ public class SpiGUITest extends JavaPlugin {
                     try {
                         size = Integer.parseInt(args[1]);
                     } catch (NumberFormatException ex) {
-                        player.sendMessage(MessageUtil.color("&c&l&oERROR  &cThe inventory size must be a valid integer."));
+                        player.sendMessage(MessageUtil.color("<red><b><i>ERROR  <red>The inventory size must be a valid integer."));
                         return true;
                     }
 
