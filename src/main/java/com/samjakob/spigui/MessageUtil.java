@@ -8,7 +8,7 @@ public class MessageUtil {
     private static final MiniMessage mm = MiniMessage.miniMessage();
 
     public static Component color(String text) {
-        return mm.deserialize(text);
+        return mm.deserialize("<!i>" + text);
     }
 
     public static Component raw(String text) {
