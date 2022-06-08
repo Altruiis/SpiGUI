@@ -1,10 +1,10 @@
 package com.samjakob.spiguitest;
 
+import com.samjakob.spigui.MessageUtil;
 import com.samjakob.spigui.SGMenu;
 import com.samjakob.spigui.SpiGUI;
 import com.samjakob.spigui.buttons.SGButton;
 import com.samjakob.spigui.item.ItemBuilder;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -13,6 +13,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.IntStream;
@@ -32,26 +33,24 @@ public class SpiGUITest extends JavaPlugin {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, Command command, @NotNull String label, String[] args) {
         if (command.getLabel().equalsIgnoreCase("spigui")) {
 
-            if (!(sender instanceof Player)) {
+            if (!(sender instanceof Player player)) {
                 sender.sendMessage("You must be a player to run this command.");
                 return true;
             }
-
-            Player player = (Player) sender;
 
             if (args.length == 0) {
                 // Open a test SpiGUI menu.
                 SGMenu myAwesomeMenu = SpiGUITest.getSpiGUI().create("&c&lSpiGUI &c(Page {currentPage}/{maxPage})", 3);
 
                 myAwesomeMenu.setButton(0, 10, new SGButton(
-                        new ItemBuilder(Material.SKULL_ITEM)
+                        new ItemBuilder(Material.PLAYER_HEAD)
                                 .skullOwner(player.getName())
-                                .name("&e&l" + player.getDisplayName())
+                                .name("&e&l" + MessageUtil.toString(player.displayName()))
                                 .lore(
-                                        "&eGame Mode: &6" + player.getGameMode().toString(),
+                                        "&eGame Mode: &6" + player.getGameMode(),
                                         "&eLocation: &6" + String.format(
                                                 "%.0f, %.0f, %.0f",
                                                 player.getLocation().getX(),
@@ -79,7 +78,7 @@ public class SpiGUITest extends JavaPlugin {
                     ));
 
                     event.getWhoClicked().sendMessage(
-                            ChatColor.translateAlternateColorCodes('&',
+                            MessageUtil.color(
                                     event.getCurrentItem().getType() == Material.GOLD_ORE
                                             ? "&e&lYou are now rich!"
                                             : "&7&lYou are now poor."
@@ -108,11 +107,11 @@ public class SpiGUITest extends JavaPlugin {
                     } else borderRunnable.set(
                             inventory.getCurrentPage() != 0
                                     ? null
-                                    : new BukkitRunnable(){
+                                    : new BukkitRunnable() {
 
                                 private final int[] TILES_TO_UPDATE = {
-                                        0,  1,  2,  3,  4,  5,  6,  7,  8,
-                                        9,                             17,
+                                        0, 1, 2, 3, 4, 5, 6, 7, 8,
+                                        9, 17,
                                         18, 19, 20, 21, 22, 23, 24, 25, 26
                                 };
 
@@ -121,7 +120,7 @@ public class SpiGUITest extends JavaPlugin {
                                 @Override
                                 public void run() {
 
-                                    IntStream.range(0, TILES_TO_UPDATE.length).map(i -> TILES_TO_UPDATE.length - i + -1).forEach(
+                                    IntStream.range(0, TILES_TO_UPDATE.length).map(i -> TILES_TO_UPDATE.length - i - 1).forEach(
                                             index -> myAwesomeMenu.setButton(TILES_TO_UPDATE[index], nextColorButton())
                                     );
 
@@ -134,7 +133,7 @@ public class SpiGUITest extends JavaPlugin {
 
                                 private SGButton nextColorButton() {
                                     return new SGButton(
-                                            new ItemBuilder(Material.STAINED_GLASS_PANE)
+                                            new ItemBuilder(Material.BLACK_STAINED_GLASS)
                                                     .name("&" + Integer.toHexString(currentColor) + "&lSpiGUI!!!")
                                                     .data(currentColor)
                                                     .build()
@@ -156,26 +155,25 @@ public class SpiGUITest extends JavaPlugin {
             }
 
             if (args.length == 2) {
-                switch(args[0]) {
-                    case "inventorySizeTest":
-                        int size = 0;
-                        try {
-                            size = Integer.parseInt(args[1]);
-                        } catch (NumberFormatException ex) {
-                            player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c&l&oERROR  &cThe inventory size must be a valid integer."));
-                            return true;
-                        }
-
-                        SGMenu inventorySizeTest = SpiGUITest.getSpiGUI().create("Test Menu", 1);
-
-                        IntStream.range(0, size).forEach(i -> inventorySizeTest.addButton(new SGButton(
-                                new ItemBuilder(Material.GOLD_ORE)
-                                    .build()
-                        )));
-
-                        player.openInventory(inventorySizeTest.getInventory());
-
+                if ("inventorySizeTest".equals(args[0])) {
+                    int size;
+                    try {
+                        size = Integer.parseInt(args[1]);
+                    } catch (NumberFormatException ex) {
+                        player.sendMessage(MessageUtil.color("&c&l&oERROR  &cThe inventory size must be a valid integer."));
                         return true;
+                    }
+
+                    SGMenu inventorySizeTest = SpiGUITest.getSpiGUI().create("Test Menu", 1);
+
+                    IntStream.range(0, size).forEach(i -> inventorySizeTest.addButton(new SGButton(
+                            new ItemBuilder(Material.GOLD_ORE)
+                                    .build()
+                    )));
+
+                    player.openInventory(inventorySizeTest.getInventory());
+
+                    return true;
                 }
             }
 

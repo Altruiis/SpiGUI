@@ -1,13 +1,18 @@
 package com.samjakob.spigui.item;
 
+import com.samjakob.spigui.MessageUtil;
+import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
@@ -84,7 +89,7 @@ public class ItemBuilder {
      */
     public ItemBuilder name(String name) {
         ItemMeta stackMeta = stack.getItemMeta();
-        stackMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', name));
+        stackMeta.displayName(MessageUtil.color(name));
         stack.setItemMeta(stackMeta);
         return this;
     }
@@ -102,9 +107,9 @@ public class ItemBuilder {
      *
      * @return The item's display name as returned from its {@link ItemMeta}.
      */
-    public String getName() {
+    public Component getName() {
         if (!stack.hasItemMeta() || !stack.getItemMeta().hasDisplayName()) return null;
-        return stack.getItemMeta().getDisplayName();
+        return stack.getItemMeta().displayName();
     }
 
     /**
@@ -150,12 +155,12 @@ public class ItemBuilder {
      * @return The {@link ItemBuilder} instance.
      */
     public ItemBuilder lore(List<String> lore) {
-        for(int i = 0; i < lore.size(); i++){
-            lore.set(i, ChatColor.translateAlternateColorCodes('&', lore.get(i)));
+        List<Component> newLore = new ArrayList<>();
+        for (String s : lore) {
+            newLore.add(MessageUtil.color(s));
         }
-
         ItemMeta stackMeta = stack.getItemMeta();
-        stackMeta.setLore(lore);
+        stackMeta.lore(newLore);
         stack.setItemMeta(stackMeta);
         return this;
     }
@@ -169,9 +174,9 @@ public class ItemBuilder {
      *
      * @return The lore of the item.
      */
-    public List<String> getLore() {
+    public List<Component> getLore() {
         if (!stack.hasItemMeta() || !stack.getItemMeta().hasLore()) return null;
-        return stack.getItemMeta().getLore();
+        return stack.getItemMeta().lore();
     }
 
     /**
@@ -206,7 +211,10 @@ public class ItemBuilder {
      * @return The updated {@link ItemBuilder} object.
      */
     public ItemBuilder durability(short durability) {
-        stack.setDurability(durability);
+        //stack.setDurability(durability);
+        if (stack instanceof Damageable damageable) {
+            damageable.setDamage(durability);
+        }
         return this;
     }
 
@@ -228,7 +236,7 @@ public class ItemBuilder {
      * @return The appropriate {@link ItemDataColor} of the item or null.
      */
     public ItemDataColor getColor() {
-        return ItemDataColor.getByValue((short) stack.getDurability());
+        return ItemDataColor.getByValue(stack.getDurability());
     }
 
     /**
@@ -294,11 +302,9 @@ public class ItemBuilder {
      * @return The {@link ItemBuilder} instance.
      */
     public ItemBuilder skullOwner(String name) {
-        if (!(stack.getItemMeta() instanceof SkullMeta)) return this;
+        if (!(stack.getItemMeta() instanceof SkullMeta meta)) return this;
 
-        stack.setDurability((byte) 3);
-        SkullMeta meta = (SkullMeta) stack.getItemMeta();
-        meta.setOwner(name);
+        meta.setOwningPlayer(Bukkit.getOfflinePlayer(name));
         stack.setItemMeta(meta);
 
         return this;

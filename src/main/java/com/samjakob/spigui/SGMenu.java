@@ -3,8 +3,8 @@ package com.samjakob.spigui;
 import com.samjakob.spigui.buttons.SGButton;
 import com.samjakob.spigui.pagination.SGPaginationButtonBuilder;
 import com.samjakob.spigui.pagination.SGPaginationButtonType;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
@@ -34,7 +34,7 @@ public class SGMenu implements InventoryHolder {
     private final JavaPlugin owner;
     private final SpiGUI spiGUI;
 
-    private String name;
+    private Component name;
     private String tag;
     private int rowsPerPage;
 
@@ -62,7 +62,7 @@ public class SGMenu implements InventoryHolder {
     SGMenu(JavaPlugin owner, SpiGUI spiGUI, String name, int rowsPerPage, String tag) {
         this.owner = owner;
         this.spiGUI = spiGUI;
-        this.name = ChatColor.translateAlternateColorCodes('&', name);
+        this.name = MessageUtil.color(name);
         this.rowsPerPage = rowsPerPage;
         this.tag = tag;
 
@@ -226,7 +226,7 @@ public class SGMenu implements InventoryHolder {
      * @param name The display name to set. (and to be color code translated)
      */
     public void setName(String name) {
-        this.name = ChatColor.translateAlternateColorCodes('&', name);
+        this.name = MessageUtil.color(name);
     }
 
     /**
@@ -236,7 +236,7 @@ public class SGMenu implements InventoryHolder {
      * @param name The display name to set.
      */
     public void setRawName(String name) {
-        this.name = name;
+        this.name = MessageUtil.raw(name);
     }
 
     /**
@@ -247,7 +247,7 @@ public class SGMenu implements InventoryHolder {
      *
      * @return The inventory's display name.
      */
-    public String getName() {
+    public Component getName() {
         return name;
     }
 
@@ -494,7 +494,7 @@ public class SGMenu implements InventoryHolder {
      * @param slot The slot to un-mark as 'sticky'.
      */
     public void unstickSlot(int slot) {
-        this.stickiedSlots.remove(Integer.valueOf(slot));
+        this.stickiedSlots.remove(slot);
     }
 
     /**
@@ -589,9 +589,9 @@ public class SGMenu implements InventoryHolder {
         }
 
         // If the name has changed, we'll need to open a new inventory.
-        String newName = name.replace("{currentPage}", String.valueOf(currentPage + 1))
-                             .replace("{maxPage}", String.valueOf(getMaxPage()));
-        if (!viewer.getOpenInventory().getTitle().equals(newName)) {
+        Component newName = MessageUtil.color(MessageUtil.toString(name).replace("{currentPage}", String.valueOf(currentPage + 1))
+                             .replace("{maxPage}", String.valueOf(getMaxPage())));
+        if (!viewer.getOpenInventory().title().equals(newName)) {
             viewer.openInventory(getInventory());
             return;
         }
@@ -622,8 +622,8 @@ public class SGMenu implements InventoryHolder {
                 // Pagination not required or disabled.
                 : getPageSize()
         ),
-            name.replace("{currentPage}", String.valueOf(currentPage + 1))
-                .replace("{maxPage}", String.valueOf(getMaxPage()))
+            MessageUtil.color(MessageUtil.toString(name).replace("{currentPage}", String.valueOf(currentPage + 1))
+                .replace("{maxPage}", String.valueOf(getMaxPage())))
         );
 
         // Add the main inventory items.
