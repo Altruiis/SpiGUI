@@ -26,7 +26,7 @@ public class SGMenuListener implements Listener {
 
         // Determine if the inventory was a SpiGUI.
         if (event.getInventory().getHolder() != null
-            && event.getInventory().getHolder() instanceof SGMenu) {
+                && event.getInventory().getHolder() instanceof SGMenu) {
 
             // Get the instance of the SpiGUI that was clicked.
             SGMenu clickedGui = (SGMenu) event.getInventory().getHolder();
@@ -64,7 +64,7 @@ public class SGMenuListener implements Listener {
                 if (paginationButton != null) paginationButton.getListener().onClick(event);
                 return;
             }
-            
+
             // If the slot is a stickied slot, get the button from page 0.
             if (clickedGui.isStickiedSlot(event.getSlot())) {
                 SGButton button = clickedGui.getButton(0, event.getSlot());
