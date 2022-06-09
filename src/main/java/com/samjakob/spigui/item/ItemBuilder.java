@@ -20,10 +20,10 @@ import java.util.function.Predicate;
 
 /**
  * A helper class for creating or modifying ItemStacks.
- *
+ * <p>
  * The class wraps an ItemStack object and provides convenient chainable, 'builder-pattern' methods for
  * manipulating the stack's metadata.
- *
+ * <p>
  * The intention is that this class will be used in builder form - for example;
  * <pre>
  * new ItemBuilder(Material.SPONGE).name("&amp;cAlmighty sponge").amount(21).build();
@@ -45,15 +45,16 @@ public class ItemBuilder {
      *
      * @param material The {@link Material} to use when creating the stack.
      */
-    public ItemBuilder (Material material) {
+    public ItemBuilder(Material material) {
         this.stack = new ItemStack(material);
     }
 
     /**
      * Creates an ItemBuilder wrapper for a given stack.
+     *
      * @param stack The ItemStack to wrap.
      */
-    public ItemBuilder (ItemStack stack) {
+    public ItemBuilder(ItemStack stack) {
         this.stack = stack;
     }
 
@@ -96,12 +97,12 @@ public class ItemBuilder {
 
     /**
      * Returns either the display name of the item, if it exists, or null if it doesn't.
-     *
+     * <p>
      * You should note that this method fetches the name directly from the stack's {@link ItemMeta},
      * so you should take extra care when comparing names with color codes - particularly if you used the
      * {@link #name(String)} method as they will be in their translated sectional symbol (§) form,
      * rather than their 'coded' form (&amp;).
-     *
+     * <p>
      * For example, if you used {@link #name(String)} to set the name to '&amp;cMy Item', the output of this
      * method would be '§cMy Item'
      *
@@ -147,7 +148,7 @@ public class ItemBuilder {
      * Sets the lore of the item.
      * As with {@link #name(String)}, color codes will be replaced. Each string represents
      * a line of the lore.
-     *
+     * <p>
      * Lines will not be automatically wrapped or truncated, so it is recommended you take
      * some consideration into how the item will be rendered with the lore.
      *
@@ -168,7 +169,7 @@ public class ItemBuilder {
     /**
      * Gets the lore of the item as a list of strings. Each string represents a line of the
      * item's lore in-game.
-     *
+     * <p>
      * As with {@link #name(String)} it should be note that color-coded lore lines will
      * be returned with the colors codes already translated.
      *
@@ -177,21 +178,6 @@ public class ItemBuilder {
     public List<Component> getLore() {
         if (!stack.hasItemMeta() || !stack.getItemMeta().hasLore()) return null;
         return stack.getItemMeta().lore();
-    }
-
-    /**
-     * An alias for {@link #durability(short)} that takes an {@link ItemDataColor} as an
-     * argument instead. This is to improve code readability when working with items such
-     * as glass panes, where the data value represents a glass pane's color.
-     *
-     * This method will still be functional for items where the data value does not represent
-     * the item's color, however it will obviously be nonsensical.
-     *
-     * @param color The desired color of the item.
-     * @return The {@link ItemBuilder} instance.
-     */
-    public ItemBuilder color(ItemDataColor color) {
-        return durability(color.getValue());
     }
 
     /**
@@ -211,7 +197,6 @@ public class ItemBuilder {
      * @return The updated {@link ItemBuilder} object.
      */
     public ItemBuilder durability(short durability) {
-        //stack.setDurability(durability);
         if (stack instanceof Damageable damageable) {
             damageable.setDamage(durability);
         }
@@ -224,29 +209,20 @@ public class ItemBuilder {
      * @return The durability of the item.
      */
     public short getDurability() {
-        return stack.getDurability();
-    }
-
-    /**
-     * Essentially a proxy for {@link ItemDataColor#getByValue(short)}.
-     *
-     * Similar to {@link #getDurability()} however it returns the value as an {@link ItemDataColor}
-     * where it is applicable, or null where it isn't.
-     *
-     * @return The appropriate {@link ItemDataColor} of the item or null.
-     */
-    public ItemDataColor getColor() {
-        return ItemDataColor.getByValue(stack.getDurability());
+        if (stack instanceof Damageable damageable) {
+            return (short) damageable.getDamage();
+        }
+        return 0;
     }
 
     /**
      * Adds the specified enchantment to the stack.
-     *
+     * <p>
      * This method uses {@link ItemStack#addUnsafeEnchantment(Enchantment, int)} rather than {@link ItemStack#addEnchantment(Enchantment, int)}
      * to avoid the associated checks of whether level is within the range for the enchantment.
      *
      * @param enchantment The enchantment to apply to the item.
-     * @param level The level of the enchantment to apply to the item.
+     * @param level       The level of the enchantment to apply to the item.
      * @return The {@link ItemBuilder} instance.
      */
     public ItemBuilder enchant(Enchantment enchantment, int level) {
@@ -271,7 +247,7 @@ public class ItemBuilder {
      * @param flag A variable-length argument containing the flags to be applied.
      * @return The {@link ItemBuilder} instance.
      */
-    public ItemBuilder flag(ItemFlag ...flag) {
+    public ItemBuilder flag(ItemFlag... flag) {
         ItemMeta meta = stack.getItemMeta();
         meta.addItemFlags(flag);
         stack.setItemMeta(meta);
@@ -284,7 +260,7 @@ public class ItemBuilder {
      * @param flag A variable-length argument containing the flags to be removed.
      * @return The {@link ItemBuilder} instance.
      */
-    public ItemBuilder deflag(ItemFlag ...flag) {
+    public ItemBuilder deflag(ItemFlag... flag) {
         ItemMeta meta = stack.getItemMeta();
         meta.removeItemFlags(flag);
         stack.setItemMeta(meta);
@@ -294,7 +270,7 @@ public class ItemBuilder {
     /**
      * If the item has {@link SkullMeta} (i.e. if the item is a skull), this can
      * be used to set the skull's owner (i.e. the player the skull represents.)
-     *
+     * <p>
      * This also sets the skull's data value to 3 for 'player head', as setting
      * the skull's owner doesn't make much sense for the mob skulls.
      *
@@ -314,10 +290,10 @@ public class ItemBuilder {
 
     /**
      * This is used to, inline, perform an operation if a given condition is true.
-     *
+     * <p>
      * The {@link ItemBuilder} instance is supplied to both the predicate (condition) and result function.
      * The result of <code>then</code> is ignored as the ItemBuilder reference is passed to it.
-     *
+     * <p>
      * Example:
      * <pre>
      * // Renames the ItemStack, if and only if, the stack's type is Acacia Doors.
@@ -325,7 +301,7 @@ public class ItemBuilder {
      * </pre>
      *
      * @param ifTrue The condition upon which, <code>then</code> should be performed.
-     * @param then The action to perform if the predicate, <code>ifTrue</code>, is true.
+     * @param then   The action to perform if the predicate, <code>ifTrue</code>, is true.
      * @return The {@link ItemBuilder} instance.
      */
     public ItemBuilder ifThen(Predicate<ItemBuilder> ifTrue, Function<ItemBuilder, Object> then) {
@@ -339,6 +315,7 @@ public class ItemBuilder {
 
     /**
      * An alias for {@link #get()}.
+     *
      * @return See {@link #get()}.
      */
     public ItemStack build() {
@@ -347,7 +324,7 @@ public class ItemBuilder {
 
     /**
      * Returns the {@link ItemStack} that the {@link ItemBuilder} instance represents.
-     *
+     * <p>
      * The modifications are performed as they are called, so this method simply returns
      * the class's private stack field.
      *
